@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="icons/favicon.png">
+<link rel="apple-touch-icon" href="icons/site.png">
 <title>התוכנות של שלומי – הורדות</title>
 <style>
 :root{--bg:#f4f6fa;--card:#fff;--fg:#1c2433;--mute:#5c6678;--line:#e1e5ee;--acc:#2563eb;--acc2:#0f9d58}
@@ -11,7 +13,8 @@
 body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--fg);line-height:1.5}
 header,main,footer{max-width:1100px;margin:auto;padding:0 20px}
 header{padding-top:36px}
-h1{margin:0 0 4px;font-size:2rem}
+h1{margin:0 0 4px;font-size:2rem;display:flex;align-items:center;gap:12px}
+.logo{width:52px;height:52px}
 .sub{color:var(--mute);margin:0 0 20px}
 details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:24px}
 summary{cursor:pointer;font-weight:600}
@@ -34,7 +37,7 @@ footer{color:var(--mute);font-size:.85rem;padding-bottom:30px}
 </head>
 <body>
 <header>
-<h1>התוכנות שלי</h1>
+<h1><img class="logo" src="icons/site.png" alt="">התוכנות שלי</h1>
 <p class="sub">כל התוכנות במקום אחד, תמיד בגרסה האחרונה.</p>
 <details>
 <summary>Windows מזהיר בהתקנה? ככה עוברים את זה</summary>
@@ -59,7 +62,7 @@ const APPS = [
  {id:'StudioLite', name:'סטודיו לייט', icon:'studiolite', desc:'בנייה, חתימה, התקנה למכשיר ו-Logcat בלי Android Studio.'},
  {id:'ClaudeTracker', name:'Claude Tracker', icon:'claudetracker', desc:'מעקב אחרי ניצול המכסה ב-Claude.'},
  {id:'GeminiTracker', name:'Gemini Tracker', icon:'geminitracker', desc:'מעקב אחרי ניצול המכסה ב-Gemini.'},
- {id:'MemoryUsage', name:'Memory Usage', desc:'מציג את ניצול הזיכרון (RAM) ליד השעון.'},
+ {id:'MemoryUsage', name:'Memory Usage', icon:'memoryusage', desc:'מציג את ניצול הזיכרון (RAM) ליד השעון.'},
  {id:'video-ai', name:'video-ai', icon:'video-ai', desc:'יצירת סרטוני AI בעברית עם Gemini, Veo ו-Flow.'},
 ];
 const REPO = 'shlomi033-cell/apps';

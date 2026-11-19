@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>התוכנות של שלומי – הורדות</title>
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--fg:#1c2433;--mute:#5c6678;--line:#e1e5ee;--acc:#2563eb;--acc2:#0f9d58}
+@media (prefers-color-scheme:dark){:root{--bg:#11151c;--card:#1a2029;--fg:#e8ecf3;--mute:#9aa4b5;--line:#2a3240;--acc:#5b8dff;--acc2:#34c27a}}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--fg);line-height:1.5}
+header,main,footer{max-width:1100px;margin:auto;padding:0 20px}
+header{padding-top:36px}
+h1{margin:0 0 4px;font-size:2rem}
+.sub{color:var(--mute);margin:0 0 20px}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:24px}
+summary{cursor:pointer;font-weight:600}
+details ol{margin:10px 0 0;padding-inline-start:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;padding:0;list-style:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.top{display:flex;gap:14px;align-items:center}
+.ico{width:64px;height:64px;border-radius:14px;flex:none;object-fit:contain}
+.ico.l{display:grid;place-items:center;background:var(--acc);color:#fff;font-size:1.8rem;font-weight:700}
+h2{margin:0;font-size:1.2rem}
+.ver{color:var(--mute);font-size:.85rem}
+.desc{margin:0;color:var(--mute);flex:1}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-block;padding:9px 16px;border-radius:10px;background:var(--acc);color:#fff;text-decoration:none;font-weight:600}
+.btn.ph{background:var(--acc2)}
+.btn.off{background:var(--line);color:var(--mute);pointer-events:none}
+.btn:focus-visible{outline:3px solid var(--fg);outline-offset:2px}
+footer{color:var(--mute);font-size:.85rem;padding-bottom:30px}
+</style>
+</head>
+<body>
+<header>
+<h1>התוכנות שלי</h1>
+<p class="sub">כל התוכנות במקום אחד, תמיד בגרסה האחרונה.</p>
+<details>
+<summary>Windows מזהיר בהתקנה? ככה עוברים את זה</summary>
+<ol>
+<li>אם הדפדפן שואל על הקובץ, בוחרים <b>שמור</b> (ב-Edge: "…" ואז <b>שמור</b>).</li>
+<li>פותחים את הקובץ. אם מופיע "Windows הגן על המחשב שלך", לוחצים על <b>מידע נוסף</b>.</li>
+<li>לוחצים על <b>הפעל בכל זאת</b>.</li>
+</ol>
+<p>האזהרה מופיעה כי התוכנות לא חתומות דיגיטלית בתעודה בתשלום. היא לא מעידה על בעיה בקובץ.</p>
+</details>
+</header>
+<main><ul class="grid" id="apps"></ul></main>
+<footer>מתעדכן אוטומטית עם כל גרסה חדשה.</footer>
+<script>
+// Each app: id = name passed to publish.bat (release tag <id>-latest, file <id>-Setup.exe)
+const APPS = [
+ {name:'TERA', icon:'tera', desc:'סנכרון תיקייה במחשב מול Google Drive ו-OneDrive, עם חיווי בסייר הקבצים.', link:'https://shlomi033-cell.github.io/tera-site/', phone:'https://shlomi033-cell.github.io/tera-site/'},
+ {id:'VoVi', name:'VoVi', icon:'vovi', desc:'נגן סרטים ומוזיקה עם כתוביות ומילות שירים.'},
+ {id:'Mabat', name:'מבט', icon:'mabat', desc:'צפייה בתמונות והמרה בין פורמטים, כולל JFIF.'},
+ {id:'CLICK-REC', name:'CLICK-REC', icon:'click-rec', desc:'הקלטת מסך, קול ומצלמה בלחיצה אחת.'},
+ {id:'vitube', name:'vitube', icon:'vitube', desc:'הורדת סרטונים ושמע (MP4 / MP3), עם תוסף לכרום.'},
+ {id:'StudioLite', name:'סטודיו לייט', icon:'studiolite', desc:'בנייה, חתימה, התקנה למכשיר ו-Logcat בלי Android Studio.'},
+ {id:'ClaudeTracker', name:'Claude Tracker', icon:'claudetracker', desc:'מעקב אחרי ניצול המכסה ב-Claude.'},
+ {id:'GeminiTracker', name:'Gemini Tracker', icon:'geminitracker', desc:'מעקב אחרי ניצול המכסה ב-Gemini.'},
+ {id:'MemoryUsage', name:'Memory Usage', desc:'מציג את ניצול הזיכרון (RAM) ליד השעון.'},
+ {id:'video-ai', name:'video-ai', icon:'video-ai', desc:'יצירת סרטוני AI בעברית עם Gemini, Veo ו-Flow.'},
+];
+const REPO = 'shlomi033-cell/apps';
+const dl = (tag, f) => `https://github.com/${REPO}/releases/download/${tag}/${f}`;
+
+function render(rel) { // rel: Map tag -> release, or null when the API is unreachable
+ document.getElementById('apps').innerHTML = APPS.map(a => {
+  const icon = a.icon ? `<img class="ico" src="icons/${a.icon}.png" alt="">` : `<div class="ico l" aria-hidden="true">${a.name[0]}</div>`;
+  let pc, ver = '';
+  if (a.link) pc = `<a class="btn" href="${a.link}">הורד למחשב</a>`;
+  else {
+   const tag = a.id + '-latest', r = rel && rel.get(tag);
+   const exe = r && r.assets.find(x => /\.exe$/i.test(x.name));
+   if (rel && !exe) pc = `<span class="btn off">בקרוב</span>`;
+   else pc = `<a class="btn" href="${dl(tag, exe ? exe.name : a.id + '-Setup.exe')}">הורד למחשב</a>`;
+   if (r) {
+    const d = new Date(Math.max(...r.assets.map(x => Date.parse(x.updated_at))));
+    ver = `גרסה ${r.name.split(' ').pop()} · ${d.toLocaleDateString('he-IL')}`;
+    const apk = r.assets.find(x => /\.apk$/i.test(x.name));
+    if (apk) a.phone = dl(tag, apk.name);
+   }
+  }
+  const ph = a.phone ? `<a class="btn ph" href="${a.phone}">אפליקציה לטלפון</a>` : '';
+  return `<li class="card"><div class="top">${icon}<div><h2>${a.name}</h2><div class="ver">${ver}</div></div></div>
+   <p class="desc">${a.desc}</p><div class="btns">${pc}${ph}</div></li>`;
+ }).join('');
+}
+render(null);
+fetch(`https://api.github.com/repos/${REPO}/releases?per_page=100`)
+ .then(r => r.ok ? r.json() : Promise.reject())
+ .then(list => render(new Map(list.map(r => [r.tag_name, r]))))
+ .catch(() => {}); // ponytail: API down/rate-limited -> static links stay
+</script>
+</body>
+</html>

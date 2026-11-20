@@ -72,7 +72,7 @@ function render(rel) { // rel: Map tag -> release, or null when the API is unrea
  document.getElementById('apps').innerHTML = APPS.map(a => {
   const icon = a.icon ? `<img class="ico" src="icons/${a.icon}.png" alt="">` : `<div class="ico l" aria-hidden="true">${a.name[0]}</div>`;
   let pc, ver = '';
-  if (a.link) pc = `<a class="btn" href="${a.link}">הורד למחשב</a>`;
+  if (a.link) { pc = `<a class="btn" href="${a.link}">הורד למחשב</a>`; ver = a.ver || ''; }
   else {
    const tag = a.id + '-latest', r = rel && rel.get(tag);
    const exe = r && r.assets.find(x => /\.exe$/i.test(x.name));
@@ -90,10 +90,15 @@ function render(rel) { // rel: Map tag -> release, or null when the API is unrea
    <p class="desc">${a.desc}</p><div class="btns">${pc}${ph}</div></li>`;
  }).join('');
 }
+let last = null;
 render(null);
 fetch(`https://api.github.com/repos/${REPO}/releases?per_page=100`)
  .then(r => r.ok ? r.json() : Promise.reject())
- .then(list => render(new Map(list.map(r => [r.tag_name, r]))))
+ .then(list => render(last = new Map(list.map(r => [r.tag_name, r]))))
+ .catch(() => {}); // ponytail: API down/rate-limited -> static links stay
+fetch('https://api.github.com/repos/shlomi033-cell/tera-site/releases/latest') // TERA publishes to its own repo
+ .then(r => r.ok ? r.json() : Promise.reject())
+ .then(r => { APPS.find(a => a.name === 'TERA').ver = `גרסה ${r.name.split(' ').pop()} · ${new Date(r.published_at).toLocaleDateString('he-IL')}`; render(last); })
  .catch(() => {}); // ponytail: API down/rate-limited -> static links stay
 </script>
 </body>
